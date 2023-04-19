@@ -5,7 +5,6 @@ const dotenv = require("dotenv");
 
 // Load environment variables from .env file
 dotenv.config();
-console.log(process.env);
 // Import your controllers or routers here
 const chatbotRouter = require("./controllers/chatbotController");
 // const userRouter = require('./controllers/userController');

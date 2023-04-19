@@ -4,6 +4,7 @@
   "description": "API for Internal AI",
   "main": "index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "jest"
   },
   "repository": {
