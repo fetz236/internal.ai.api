@@ -1,7 +1,3 @@
-// Add these lines at the beginning of your test file
-jest.mock("../../src/services/chatbotService");
-const { processMessage } = require("../../src/services/chatbotService");
-
 const request = require("supertest");
 const express = require("express");
 const chatbotRouter = require("../../src/controllers/chatbotController");
@@ -11,23 +7,15 @@ app.use(express.json());
 app.use("/api/chatbot", chatbotRouter);
 
 describe("ChatbotController", () => {
-  beforeEach(() => {
-    processMessage.mockClear();
-  });
-
   it("should return a response when provided with a valid message", async () => {
-    processMessage.mockResolvedValue(
-      "This is a mocked response from the chatbot service."
-    );
-
     const response = await request(app)
       .post("/api/chatbot/ask")
-      .send({ message: "What is the purpose of an internal wiki?" });
+      .send({ message: "hi" });
 
     console.error(response.body); // Add this line to print the error response
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty("response");
-  });
+  }, 10000); // Increase the timeout to 10 seconds
 
   it("should return an error when no message is provided", async () => {
     const response = await request(app).post("/api/chatbot/ask").send({});
