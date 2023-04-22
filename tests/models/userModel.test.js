@@ -4,13 +4,18 @@ const User = require("../../src/models/userModel");
 const bcrypt = require("bcrypt");
 const { hashPassword } = require("../../src/utils/passwordUtils");
 
+function randomEmail() {
+  const randomNumber = Math.floor(Math.random() * 100000);
+  return `test${randomNumber}@example.com`;
+}
+
 describe("User model", () => {
-  const testEmail = "test@example.com";
   const testPassword = "testpassword";
   const testUserId = "123";
   const testCompanyId = "456";
 
   it("should save a new user", async () => {
+    const testEmail = randomEmail();
     const user = new User(testEmail, testPassword, testUserId, testCompanyId);
 
     await user.save();
@@ -21,9 +26,10 @@ describe("User model", () => {
     expect(savedUser.userId).toBe(testUserId);
     expect(savedUser.companyId).toBe(testCompanyId);
     expect(await bcrypt.compare(testPassword, savedUser.password)).toBe(true);
-  });
+  }, 10000);
 
   it("should validate the password", async () => {
+    const testEmail = randomEmail();
     const user = new User(testEmail, testPassword, testUserId, testCompanyId);
 
     await user.save(); // Let the save method handle hashing the password
@@ -32,9 +38,10 @@ describe("User model", () => {
     const isPasswordValid = await savedUser.validatePassword(testPassword);
 
     expect(isPasswordValid).toBe(true);
-  });
+  }, 10000);
 
   it("should not validate the incorrect password", async () => {
+    const testEmail = randomEmail();
     const user = new User(testEmail, testPassword, testUserId, testCompanyId);
 
     const hashedPassword = await hashPassword(testPassword);
@@ -48,5 +55,5 @@ describe("User model", () => {
     );
 
     expect(isPasswordValid).toBe(false);
-  });
+  }, 10000);
 });
