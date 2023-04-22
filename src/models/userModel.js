@@ -1,6 +1,6 @@
 // src/models/userModel.js
 
-const AWS = require("aws-sdk");
+const AWS = require("../config/awsConfig"); // Use the new config file
 
 const { hashPassword, comparePassword } = require("../utils/passwordUtils");
 
