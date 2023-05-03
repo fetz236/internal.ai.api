@@ -1,3 +1,4 @@
+//src/services/authService.js
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
