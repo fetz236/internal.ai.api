@@ -1,5 +1,13 @@
+//src/controllers/userController.js
 const authService = require("../services/authService");
 
+/**
+ * Handles user registration requests.
+ * @async
+ * @function
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 exports.register = async (req, res) => {
   try {
     const { email, password, companyId } = req.body;
@@ -10,6 +18,13 @@ exports.register = async (req, res) => {
   }
 };
 
+/**
+ * Handles user login requests.
+ * @async
+ * @function
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
