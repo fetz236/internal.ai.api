@@ -4,10 +4,7 @@ const User = require("../../src/models/userModel");
 const bcrypt = require("bcrypt");
 const { hashPassword } = require("../../src/utils/passwordUtils");
 
-function randomEmail() {
-  const randomNumber = Math.floor(Math.random() * 100000);
-  return `test${randomNumber}@example.com`;
-}
+const { randomEmail } = require("../utils/emailHelper");
 
 describe("User model", () => {
   const testPassword = "testpassword";
