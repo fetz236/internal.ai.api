@@ -16,8 +16,8 @@ describe("generateResponse", () => {
 
   test("should return the assistant's message", async () => {
     const message = "What is the capital of France?";
-    const companyId = 1;
-    const userId = 1;
+    const companyId = "1";
+    const userId = "1";
     const assistantMessage = "The capital of France is Paris.";
 
     mockAxios.onPost().reply(200, {
@@ -30,8 +30,8 @@ describe("generateResponse", () => {
 
   test("should throw an error when the API request fails", async () => {
     const message = "What is the capital of France?";
-    const companyId = 1;
-    const userId = 1;
+    const companyId = "1";
+    const userId = "1";
 
     mockAxios.onPost().networkError();
 
@@ -43,12 +43,12 @@ describe("generateResponse", () => {
   });
 
   test("should maintain conversation history for user and company", async () => {
-    const companyId = 1;
-    const userId = 1;
+    const companyId = "15251";
+    const userId = "15251251";
     const message1 = "What is the capital of France?";
-    const message2 = "What is the currency of France?";
+    const message2 = "What is the currency of Zimbabwe?";
     const assistantMessage1 = "The capital of France is Paris.";
-    const assistantMessage2 = "The currency of France is the Euro.";
+    const assistantMessage2 = "The currency of Zimbabwe is the ZWD.";
 
     mockAxios
       .onPost()
@@ -67,7 +67,10 @@ describe("generateResponse", () => {
     expect(response2).toBe(assistantMessage2);
     // Check if the POST requests include the correct conversation history
     expect(mockAxios.history.post[0].data).toContain(
-      JSON.stringify({ role: "system", content: `Company ID: ${companyId}` })
+      JSON.stringify({
+        role: "assistant",
+        content: assistantMessage1,
+      })
     );
     expect(mockAxios.history.post[0].data).toContain(
       JSON.stringify({ role: "user", content: message1 })

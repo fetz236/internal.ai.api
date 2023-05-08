@@ -1,9 +1,10 @@
 const axios = require("axios");
-
+const {
+  getConversationHistory,
+  saveConversationHistory,
+} = require("./conversationHistoryService");
 const openaiEndpoint = "https://api.openai.com/v1/chat/completions";
 const apiKey = process.env.OPENAI_API_KEY;
-
-const conversationHistory = {};
 
 async function generateResponse(message, companyId, userId) {
   try {
@@ -12,35 +13,36 @@ async function generateResponse(message, companyId, userId) {
       Authorization: `Bearer ${apiKey}`,
     };
 
-    // Initialize conversation history for the company and user if it doesn't exist
-    if (!conversationHistory[companyId]) {
-      conversationHistory[companyId] = {};
-    }
-    if (!conversationHistory[companyId][userId]) {
-      conversationHistory[companyId][userId] = [
-        { role: "system", content: `Company ID: ${companyId}` },
-      ];
-    }
+    // Get the conversation history
+    const conversation = await getConversationHistory(userId, companyId);
 
-    // Add the new user message to the conversation history
-    conversationHistory[companyId][userId].push({
-      role: "user",
-      content: message,
-    });
+    // Add the new message to the conversation
+    conversation.push({ role: "user", content: message });
+
+    // Truncate the conversation to fit within the 8k token limit
+    let tokenCount = conversation.reduce(
+      (count, msg) => count + msg.content.length,
+      0
+    );
+    while (tokenCount > 8000) {
+      conversation.shift();
+      tokenCount = conversation.reduce(
+        (count, msg) => count + msg.content.length,
+        0
+      );
+    }
 
     const data = {
       model: "gpt-4",
-      messages: conversationHistory[companyId][userId],
+      messages: conversation,
     };
 
     const response = await axios.post(openaiEndpoint, data, { headers });
     const assistantMessage = response.data.choices[0].message.content;
 
-    // Add the assistant message to the conversation history
-    conversationHistory[companyId][userId].push({
-      role: "assistant",
-      content: assistantMessage,
-    });
+    // Save the updated conversation
+    conversation.push({ role: "assistant", content: assistantMessage });
+    await saveConversationHistory(userId, companyId, conversation);
 
     return assistantMessage;
   } catch (error) {
