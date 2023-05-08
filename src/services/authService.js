@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const { v4: uuidv4 } = require("uuid"); // Import the uuid library
 
-const SECRET_KEY = process.env.JWT_SECRET || "your_jwt_secret";
+const SECRET_KEY = process.env.JWT_SECRET;
 
 /**
  * Registers a new user.

@@ -3,7 +3,7 @@ const httpMocks = require("node-mocks-http");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../../src/middleware/authMiddleware");
 
-const SECRET_KEY = process.env.JWT_SECRET || "your_jwt_secret";
+const SECRET_KEY = process.env.JWT_SECRET;
 
 describe("authMiddleware", () => {
   let req, res, next;

@@ -2,7 +2,7 @@
 const jwt = require("jsonwebtoken");
 
 // Load the JWT secret from the environment variable or use a default value
-const SECRET_KEY = process.env.JWT_SECRET || "your_jwt_secret";
+const SECRET_KEY = process.env.JWT_SECRET;
 
 /**
  * Middleware function to authenticate the user using JWT token.
