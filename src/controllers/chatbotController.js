@@ -6,6 +6,8 @@ router.post("/ask", async (req, res) => {
   try {
     const { message } = req.body;
     const companyId = 1;
+    const userId = 1;
+
     if (!message) {
       return res.status(400).json({ error: "Message is required" });
     }
@@ -13,7 +15,8 @@ router.post("/ask", async (req, res) => {
     // Process the message using your chatbotService
     const assistantMessage = await chatbotService.generateResponse(
       message,
-      companyId
+      companyId,
+      userId
     );
 
     res.json({ response: assistantMessage });
