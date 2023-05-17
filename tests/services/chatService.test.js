@@ -67,16 +67,13 @@ describe("generateResponse", () => {
     expect(response2).toBe(assistantMessage2);
     // Check if the POST requests include the correct conversation history
     expect(mockAxios.history.post[0].data).toContain(
-      JSON.stringify({
-        role: "assistant",
-        content: assistantMessage1,
-      })
+      JSON.stringify({ role: "assistant", content: assistantMessage1 })
     );
     expect(mockAxios.history.post[0].data).toContain(
       JSON.stringify({ role: "user", content: message1 })
     );
     expect(mockAxios.history.post[1].data).toContain(
-      JSON.stringify({ role: "assistant", content: assistantMessage1 })
+      JSON.stringify({ role: "assistant", content: assistantMessage2 })
     );
     expect(mockAxios.history.post[1].data).toContain(
       JSON.stringify({ role: "user", content: message2 })

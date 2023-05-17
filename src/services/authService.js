@@ -13,8 +13,15 @@ const SECRET_KEY = process.env.JWT_SECRET;
  * @param {string} password - The user's password.
  * @param {string} companyId - The user's company ID.
  * @returns {Object} The created user object.
+ * @throws {Error} If the email is invalid.
  */
 exports.register = async (email, password, companyId) => {
+  // Validate the email format using regex
+  const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+  if (!emailRegex.test(email)) {
+    throw new Error("Invalid email format");
+  }
+
   const userId = uuidv4(); // Generate a new UUID for userId
   const user = new User(email, password, userId, companyId);
   await user.save();
