@@ -4,7 +4,8 @@ const chatbotService = require("../services/chatbotService");
 
 router.post("/ask", async (req, res) => {
   try {
-    const { message, companyId, userId } = req.body;
+    const { message } = req.body;
+    const { userId, companyId } = req;
 
     if (!message) {
       return res.status(400).json({ error: "Message is required" });

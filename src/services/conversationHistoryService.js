@@ -14,9 +14,15 @@ async function getConversationHistory(userId, companyId) {
 
   try {
     const result = await dynamoDb.get(params).promise();
-    return result.Item ? result.Item.conversation : [];
+    if (result.Item) {
+      return result.Item.conversation;
+    } else {
+      // If there is no existing conversation history, create a new record
+      await saveConversationHistory(userId, companyId, []);
+      return [];
+    }
   } catch (error) {
-    console.error("Error retrieving conversation history:", error);
+    console.error("Error retrieving or creating conversation history:", error);
     throw error;
   }
 }

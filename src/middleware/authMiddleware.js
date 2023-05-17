@@ -31,6 +31,8 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
     req.userId = decoded.userId;
+    req.companyId = decoded.companyId;
+
     next();
   } catch (error) {
     // If token verification fails, return a 401 status with an error message

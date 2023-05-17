@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 // Configure AWS SDK
 AWS.config.update({
-  region: "your-region", // Replace with your AWS region
+  region: process.env.AWS_REGION, // Replace with your AWS region
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });

@@ -38,9 +38,13 @@ exports.login = async (email, password) => {
     throw new Error("Invalid password");
   }
 
-  const token = jwt.sign({ userId: user.userId }, SECRET_KEY, {
-    expiresIn: "1h",
-  });
+  const token = jwt.sign(
+    { userId: user.userId, companyId: user.companyId },
+    SECRET_KEY,
+    {
+      expiresIn: "1h",
+    }
+  );
 
   // Remove sensitive data from user object before returning
   user.password = undefined;
