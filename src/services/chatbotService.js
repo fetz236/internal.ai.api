@@ -6,7 +6,8 @@ const {
 const openaiEndpoint = "https://api.openai.com/v1/chat/completions";
 const apiKey = process.env.OPENAI_API_KEY;
 
-async function generateResponse(message, companyId, userId) {
+async function generateResponse(message, companyId, userEmail) {
+  console.log(userEmail);
   try {
     const headers = {
       "Content-Type": "application/json",
@@ -14,7 +15,7 @@ async function generateResponse(message, companyId, userId) {
     };
 
     // Get the conversation history
-    const conversation = await getConversationHistory(userId, companyId);
+    const conversation = await getConversationHistory(userEmail, companyId);
 
     // Add the new message to the conversation
     conversation.push({ role: "user", content: message });
@@ -42,11 +43,11 @@ async function generateResponse(message, companyId, userId) {
 
     // Save the updated conversation
     conversation.push({ role: "assistant", content: assistantMessage });
-    await saveConversationHistory(userId, companyId, conversation);
+    await saveConversationHistory(userEmail, companyId, conversation);
 
     return assistantMessage;
   } catch (error) {
-    console.error("Error in generateResponse:", error);
+    console.error("Error in generateResponse:", userEmail, error);
     throw error;
   }
 }

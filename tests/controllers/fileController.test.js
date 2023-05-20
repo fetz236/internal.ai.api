@@ -52,8 +52,8 @@ describe("POST /upload", () => {
     expect(response.body).toEqual({ response: "Processed file content" });
     expect(chatbotService.generateResponse).toHaveBeenCalledWith(
       "Valid file content",
-      1,
-      1
+      "1",
+      "debug@example.com"
     );
   });
 
@@ -82,8 +82,8 @@ describe("POST /upload", () => {
     expect(response.body).toEqual({ response: "Processed file content" });
     expect(chatbotService.generateResponse).toHaveBeenCalledWith(
       fs.readFileSync(filePath, "utf-8"),
-      1,
-      1
+      "1",
+      "debug@example.com"
     );
   });
 });

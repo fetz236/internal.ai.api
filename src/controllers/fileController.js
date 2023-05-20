@@ -31,8 +31,8 @@ const isValidFileType = (mimetype) => {
 router.post("/upload", upload.single("file"), async (req, res) => {
   try {
     const file = req.file;
-    const companyId = 1;
-    const userId = 1;
+    const companyId = "1";
+    const userEmail = "debug@example.com";
 
     // Check if a file is provided
     if (!file) {
@@ -51,7 +51,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     const assistantMessage = await chatbotService.generateResponse(
       fileContent,
       companyId,
-      userId
+      userEmail
     );
 
     // Send the assistant's response as JSON

@@ -3,12 +3,11 @@ const AWS = require("../config/awsConfig"); // Use the new config file
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const tableName = "ConversationHistory";
 
-async function getConversationHistory(userId, companyId) {
+async function getConversationHistory(userEmail, companyId) {
   const params = {
     TableName: tableName,
     Key: {
-      userId: userId,
-      companyId: companyId,
+      email: userEmail,
     },
   };
 
@@ -18,7 +17,7 @@ async function getConversationHistory(userId, companyId) {
       return result.Item.conversation;
     } else {
       // If there is no existing conversation history, create a new record
-      await saveConversationHistory(userId, companyId, []);
+      await saveConversationHistory(userEmail, companyId, []);
       return [];
     }
   } catch (error) {
@@ -27,11 +26,11 @@ async function getConversationHistory(userId, companyId) {
   }
 }
 
-async function saveConversationHistory(userId, companyId, conversation) {
+async function saveConversationHistory(userEmail, companyId, conversation) {
   const params = {
     TableName: tableName,
     Item: {
-      userId: userId,
+      email: userEmail,
       companyId: companyId,
       conversation: conversation,
     },

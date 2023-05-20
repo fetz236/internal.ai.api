@@ -27,10 +27,11 @@ const authMiddleware = (req, res, next) => {
     return res.status(401).json({ message: "Invalid token format" });
   }
 
-  // Try to verify the JWT token and set the decoded userId in the request object
+  // Try to verify the JWT token and set the decoded userEmail in the request object
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    req.userId = decoded.userId;
+    console.log("decoded", decoded);
+    req.userEmail = decoded.userEmail;
     req.companyId = decoded.companyId;
 
     next();

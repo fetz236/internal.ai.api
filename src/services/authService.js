@@ -44,9 +44,8 @@ exports.login = async (email, password) => {
   if (!isPasswordValid) {
     throw new Error("Invalid password");
   }
-
   const token = jwt.sign(
-    { userId: user.userId, companyId: user.companyId },
+    { userEmail: user.email, companyId: user.companyId },
     SECRET_KEY,
     {
       expiresIn: "1h",

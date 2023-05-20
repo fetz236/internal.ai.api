@@ -45,7 +45,7 @@ class User {
     });
   }
 
-  static async getByEmail(email) {
+  static async get(email) {
     const params = {
       TableName: "Users",
       KeyConditionExpression: "email = :email",

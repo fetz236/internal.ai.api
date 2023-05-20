@@ -2,10 +2,11 @@ const request = require("supertest");
 const express = require("express");
 const chatbotRouter = require("../../src/controllers/chatbotController");
 const authService = require("../../src/services/authService");
+const authMiddleware = require("../../src/middleware/authMiddleware");
 
 const app = express();
 app.use(express.json());
-app.use("/api/chatbot", chatbotRouter);
+app.use("/api/chatbot", authMiddleware, chatbotRouter);
 
 describe("ChatbotController", () => {
   let token; // hold the token
@@ -17,7 +18,6 @@ describe("ChatbotController", () => {
       "testpassword"
     );
     token = authResponse.token;
-    console.log(token);
   });
 
   it("should return a response when provided with a valid message", async () => {
@@ -25,7 +25,6 @@ describe("ChatbotController", () => {
       .post("/api/chatbot/ask")
       .set("Authorization", `Bearer ${token}`) // add token to request header
       .send({ message: "hi" });
-    console.log;
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty("response");
   });

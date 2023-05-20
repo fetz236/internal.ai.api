@@ -49,20 +49,17 @@ class User {
       },
     };
 
-    return new Promise((resolve, reject) => {
-      dynamoDB.get(params, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (data && data.Item) {
-            const { email, password, userId, companyId } = data.Item;
-            resolve(new User(email, password, userId, companyId));
-          } else {
-            reject(new Error("User not found."));
-          }
-        }
-      });
-    });
+    try {
+      const data = await dynamoDB.get(params).promise();
+      if (data && data.Item) {
+        const { email, password, userId, companyId } = data.Item;
+        return new User(email, password, userId, companyId);
+      } else {
+        throw new Error("User not found.");
+      }
+    } catch (err) {
+      throw err;
+    }
   }
 
   async validatePassword(password) {
