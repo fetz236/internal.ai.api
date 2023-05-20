@@ -3,12 +3,14 @@ const request = require("supertest");
 const express = require("express");
 const fileController = require("../../src/controllers/fileController");
 const chatbotService = require("../../src/services/chatbotService");
+const authMiddleware = require("../../src/middleware/authMiddleware");
+const authService = require("../../src/services/authService");
 const fs = require("fs");
 const path = require("path");
 
 const app = express();
 app.use(express.json());
-app.use("/", fileController);
+app.use("/api/file", authMiddleware, fileController);
 
 // Mock the chatbotService.generateResponse() function
 jest.mock("../../src/services/chatbotService", () => {
@@ -17,20 +19,37 @@ jest.mock("../../src/services/chatbotService", () => {
   };
 });
 
-describe("POST /upload", () => {
+let token;
+
+describe("POST /api/file/upload", () => {
   beforeEach(() => {
     chatbotService.generateResponse.mockReset();
   });
+  beforeAll(async () => {
+    // add login process before all tests
+    const authResponse = await authService.login(
+      "debug@example.com",
+      "testpassword"
+    );
+    token = authResponse.token;
+  });
 
   test("should return 400 if no file is uploaded", async () => {
-    const response = await request(app).post("/upload");
+    const response = await request(app)
+      .post("/api/file/upload")
+      .set("Authorization", `Bearer ${token}`)
+      .attach("file", Buffer.from("Invalid file content"), {
+        filename: "test.invalid",
+        contentType: "application/octet-stream",
+      });
     expect(response.status).toBe(400);
-    expect(response.body).toEqual({ error: "File is required" });
+    expect(response.body).toEqual({ error: "Invalid file type" });
   });
 
   test("should return 400 if an invalid file type is uploaded", async () => {
     const response = await request(app)
-      .post("/upload")
+      .post("/api/file/upload")
+      .set("Authorization", `Bearer ${token}`)
       .attach("file", Buffer.from("Invalid file content"), {
         filename: "test.invalid",
         contentType: "application/octet-stream",
@@ -43,7 +62,8 @@ describe("POST /upload", () => {
     chatbotService.generateResponse.mockResolvedValue("Processed file content");
 
     const response = await request(app)
-      .post("/upload")
+      .post("/api/file/upload")
+      .set("Authorization", `Bearer ${token}`)
       .attach("file", Buffer.from("Valid file content"), {
         filename: "test.txt",
         contentType: "text/plain",
@@ -52,7 +72,7 @@ describe("POST /upload", () => {
     expect(response.body).toEqual({ response: "Processed file content" });
     expect(chatbotService.generateResponse).toHaveBeenCalledWith(
       "Valid file content",
-      "1",
+      "123",
       "debug@example.com"
     );
   });
@@ -61,7 +81,8 @@ describe("POST /upload", () => {
     chatbotService.generateResponse.mockRejectedValue(new Error("Test error"));
 
     const response = await request(app)
-      .post("/upload")
+      .post("/api/file/upload")
+      .set("Authorization", `Bearer ${token}`)
       .attach("file", Buffer.from("Valid file content"), {
         filename: "test.txt",
         contentType: "text/plain",
@@ -69,20 +90,22 @@ describe("POST /upload", () => {
     expect(response.status).toBe(500);
     expect(response.body).toEqual({ error: "Internal Server Error" });
   });
+
   test("should return the assistant's response when a valid file is uploaded", async () => {
     chatbotService.generateResponse.mockResolvedValue("Processed file content");
 
     const filePath = path.resolve(__dirname, "../dummy.txt");
 
     const response = await request(app)
-      .post("/upload")
+      .post("/api/file/upload")
+      .set("Authorization", `Bearer ${token}`)
       .attach("file", filePath);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ response: "Processed file content" });
     expect(chatbotService.generateResponse).toHaveBeenCalledWith(
       fs.readFileSync(filePath, "utf-8"),
-      "1",
+      "123",
       "debug@example.com"
     );
   });

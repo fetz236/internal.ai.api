@@ -7,6 +7,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 // Import your controllers or routers here
 const chatbotRouter = require("./controllers/chatbotController");
+const fileRouter = require("./controllers/fileController");
 const userRouter = require("./controllers/userController");
 const authMiddleware = require("./middleware/authMiddleware");
 // Initialize the Express app
@@ -20,6 +21,7 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 // Replace these with your actual routes
 app.post("/register", userRouter.register);
 app.post("/login", userRouter.login);
+app.use("/api/file", authMiddleware, fileRouter);
 app.use("/api/chatbot", authMiddleware, chatbotRouter);
 
 // app.use('/api/users', userRouter);

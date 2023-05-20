@@ -30,10 +30,8 @@ const isValidFileType = (mimetype) => {
  */
 router.post("/upload", upload.single("file"), async (req, res) => {
   try {
-    const file = req.file;
-    const companyId = "1";
-    const userEmail = "debug@example.com";
-
+    const { file, userEmail, companyId } = req;
+    console.log(file, userEmail, companyId);
     // Check if a file is provided
     if (!file) {
       return res.status(400).json({ error: "File is required" });

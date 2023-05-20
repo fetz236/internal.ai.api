@@ -30,7 +30,6 @@ const authMiddleware = (req, res, next) => {
   // Try to verify the JWT token and set the decoded userEmail in the request object
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    console.log("decoded", decoded);
     req.userEmail = decoded.userEmail;
     req.companyId = decoded.companyId;
 

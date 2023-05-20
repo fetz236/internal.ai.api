@@ -7,7 +7,6 @@ const openaiEndpoint = "https://api.openai.com/v1/chat/completions";
 const apiKey = process.env.OPENAI_API_KEY;
 
 async function generateResponse(message, companyId, userEmail) {
-  console.log(userEmail);
   try {
     const headers = {
       "Content-Type": "application/json",

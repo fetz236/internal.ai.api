@@ -9,7 +9,6 @@ router.post("/ask", async (req, res) => {
     if (!message) {
       return res.status(400).json({ error: "Message is required" });
     }
-    console.log(userEmail, req);
     // Process the message using your chatbotService
     const assistantMessage = await chatbotService.generateResponse(
       message,
