@@ -35,8 +35,11 @@ const authMiddleware = (req, res, next) => {
 
     next();
   } catch (error) {
-    // If token verification fails, return a 401 status with an error message
-    return res.status(401).json({ message: "Invalid token" });
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ message: "Token expired" });
+    } else {
+      return res.status(401).json({ message: "Invalid token" });
+    }
   }
 };
 
