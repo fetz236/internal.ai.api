@@ -1,72 +1,89 @@
+// src/controllers/fileController.js
 const express = require("express");
 const multer = require("multer");
+const mammoth = require("mammoth");
 const chatbotService = require("../services/chatbotService");
 
 const router = express.Router();
 
-// Configure multer for in-memory storage and file size limits
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 1024 * 1024, // 1 MB file size limit
+    fileSize: 1024 * 1024,
   },
 });
 
-// Define the valid mime types for the accepted file formats
-const validMimeTypes = ["text/plain", "text/csv"];
+// Define mime types
+const textMimeTypes = ["text/plain", "text/csv"];
+const docxMimeType =
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-/**
- * Check if the mimetype of the file is valid.
- *
- * @param {string} mimetype - The mimetype of the file to be checked.
- * @return {boolean} - Returns true if the mimetype is valid, false otherwise.
- */
-const isValidFileType = (mimetype) => {
-  return validMimeTypes.includes(mimetype);
+const isTextFileType = (mimetype) => textMimeTypes.includes(mimetype);
+const isDocxFileType = (mimetype) => mimetype === docxMimeType;
+
+const convertTextFile = (file) => file.buffer.toString("utf-8");
+const convertDocxFile = async (file) => {
+  const { value } = await mammoth.extractRawText({ buffer: file.buffer });
+  return value;
 };
 
-/**
- * POST /upload route for uploading a file and processing its content.
- */
 router.post("/upload", upload.single("file"), async (req, res) => {
   try {
     const { file, userEmail, companyId } = req;
-    console.log(file, userEmail, companyId);
-    // Check if a file is provided
+
     if (!file) {
       return res.status(400).json({ error: "File is required" });
     }
 
-    // Validate the file type
-    if (!isValidFileType(file.mimetype)) {
+    if (!isTextFileType(file.mimetype)) {
       return res.status(400).json({ error: "Invalid file type" });
     }
 
-    // Convert the file buffer to a string
-    const fileContent = file.buffer.toString("utf-8");
-
-    // Process the file content using your chatbotService
+    const fileContent = convertTextFile(file);
     const assistantMessage = await chatbotService.generateResponse(
       fileContent,
       companyId,
       userEmail
     );
 
-    // Send the assistant's response as JSON
     res.json({ response: assistantMessage });
   } catch (error) {
-    console.error(error);
-    if (
-      error instanceof multer.MulterError &&
-      error.code === "LIMIT_FILE_SIZE"
-    ) {
-      // Handle file size limit error
-      res.status(400).json({ error: "File size limit exceeded" });
-    } else {
-      // Handle other internal server errors
-      res.status(500).json({ error: "Internal Server Error" });
-    }
+    handleError(res, error);
   }
 });
+
+router.post("/uploadDocx", upload.single("file"), async (req, res) => {
+  try {
+    const { file, userEmail, companyId } = req;
+
+    if (!file) {
+      return res.status(400).json({ error: "File is required" });
+    }
+
+    if (!isDocxFileType(file.mimetype)) {
+      return res.status(400).json({ error: "Invalid file type" });
+    }
+
+    const fileContent = (await convertDocxFile(file)).trim();
+    const assistantMessage = await chatbotService.generateResponse(
+      fileContent,
+      companyId,
+      userEmail
+    );
+
+    res.json({ response: assistantMessage });
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+const handleError = (res, error) => {
+  console.error(error);
+  if (error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE") {
+    res.status(400).json({ error: "File size limit exceeded" });
+  } else {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 module.exports = router;
