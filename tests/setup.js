@@ -1,6 +1,12 @@
 // src/models/userModel.js
 
-const AWS = require("aws-sdk");
+const AWS = require("aws-sdk"),
+      {
+        DynamoDBDocument
+      } = require("@aws-sdk/lib-dynamodb"),
+      {
+        DynamoDB
+      } = require("@aws-sdk/client-dynamodb");
 const bcrypt = require("bcrypt");
 
 // Configure AWS SDK
@@ -10,7 +16,7 @@ AWS.config.update({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-const dynamoDB = new AWS.DynamoDB.DocumentClient();
+const dynamoDB = DynamoDBDocument.from(new DynamoDB());
 
 class User {
   constructor(userData) {
