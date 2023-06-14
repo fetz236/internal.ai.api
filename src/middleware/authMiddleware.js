@@ -27,14 +27,19 @@ const authMiddleware = (req, res, next) => {
     return res.status(401).json({ message: "Invalid token format" });
   }
 
-  // Try to verify the JWT token and set the decoded userId in the request object
+  // Try to verify the JWT token and set the decoded userEmail in the request object
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    req.userId = decoded.userId;
+    req.userEmail = decoded.userEmail;
+    req.companyId = decoded.companyId;
+
     next();
   } catch (error) {
-    // If token verification fails, return a 401 status with an error message
-    return res.status(401).json({ message: "Invalid token" });
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ message: "Token expired" });
+    } else {
+      return res.status(401).json({ message: "Invalid token" });
+    }
   }
 };
 

@@ -1,5 +1,5 @@
 //src/controllers/userController.js
-const authService = require("../services/authService");
+const userService = require("../services/userService");
 
 /**
  * Handles user registration requests.
@@ -11,7 +11,7 @@ const authService = require("../services/authService");
 exports.register = async (req, res) => {
   try {
     const { email, password, companyId } = req.body;
-    const user = await authService.register(email, password, companyId);
+    const user = await userService.register(email, password, companyId);
     res.status(201).json({ message: "User registered successfully", user });
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const { token, user } = await authService.login(email, password);
+    const { token, user } = await userService.login(email, password);
     res
       .status(200)
       .json({ message: "User logged in successfully", token, user });

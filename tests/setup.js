@@ -1,16 +1,22 @@
 // src/models/userModel.js
 
-const AWS = require("aws-sdk");
+const AWS = require("aws-sdk"),
+      {
+        DynamoDBDocument
+      } = require("@aws-sdk/lib-dynamodb"),
+      {
+        DynamoDB
+      } = require("@aws-sdk/client-dynamodb");
 const bcrypt = require("bcrypt");
 
 // Configure AWS SDK
 AWS.config.update({
-  region: "your-region", // Replace with your AWS region
+  region: process.env.AWS_REGION, // Replace with your AWS region
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-const dynamoDB = new AWS.DynamoDB.DocumentClient();
+const dynamoDB = DynamoDBDocument.from(new DynamoDB());
 
 class User {
   constructor(userData) {
@@ -45,7 +51,7 @@ class User {
     });
   }
 
-  static async getByEmail(email) {
+  static async get(email) {
     const params = {
       TableName: "Users",
       KeyConditionExpression: "email = :email",

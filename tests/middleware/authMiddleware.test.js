@@ -35,11 +35,11 @@ describe("authMiddleware", () => {
   });
 
   test("should call next() if token is valid", () => {
-    const payload = { userId: "1234" };
+    const payload = { userEmail: "debug@example.com" };
     const validToken = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
     req.headers.authorization = `Bearer ${validToken}`;
     authMiddleware(req, res, next);
     expect(next).toHaveBeenCalled();
-    expect(req.userId).toEqual(payload.userId);
+    expect(req.userEmail).toEqual(payload.userEmail);
   });
 });
