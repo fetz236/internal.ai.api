@@ -1,7 +1,7 @@
 const request = require("supertest");
 const express = require("express");
 const chatbotRouter = require("../../src/controllers/chatbotController");
-const authService = require("../../src/services/authService");
+const userService = require("../../src/services/userService");
 const authMiddleware = require("../../src/middleware/authMiddleware");
 
 const app = express();
@@ -13,7 +13,7 @@ describe("ChatbotController", () => {
 
   beforeAll(async () => {
     // add login process before all tests
-    const authResponse = await authService.login(
+    const authResponse = await userService.login(
       "debug@example.com",
       "testpassword"
     );

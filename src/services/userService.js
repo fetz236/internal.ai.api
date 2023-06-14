@@ -1,4 +1,4 @@
-//src/services/authService.js
+//src/services/userService.js
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const { v4: uuidv4 } = require("uuid"); // Import the uuid library

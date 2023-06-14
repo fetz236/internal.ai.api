@@ -1,7 +1,7 @@
-// src/services/authService.test.js
+// src/services/userService.test.js
 const AWSMock = require("aws-sdk-mock");
 
-const authService = require("../../src/services/authService");
+const userService = require("../../src/services/userService");
 const User = require("../../src/models/userModel");
 
 const { hashPassword } = require("../../src/utils/passwordUtils");
@@ -11,7 +11,7 @@ beforeEach(() => {
   AWSMock.restore("DynamoDB.DocumentClient");
 });
 
-describe("authService", () => {
+describe("userService", () => {
   describe("register", () => {
     test("should register a new user successfully", async () => {
       const email = randomEmail();
@@ -26,7 +26,7 @@ describe("authService", () => {
         callback(null, {});
       });
 
-      const newUser = await authService.register(email, password, companyId);
+      const newUser = await userService.register(email, password, companyId);
 
       expect(newUser.email).toBe(email);
       expect(newUser.password).toBe(password);
@@ -50,7 +50,7 @@ describe("authService", () => {
       });
 
       await expect(
-        authService.register(email, password, companyId)
+        userService.register(email, password, companyId)
       ).rejects.toThrow("Email already exists.");
     });
   });
@@ -74,7 +74,7 @@ describe("authService", () => {
         });
       });
 
-      const { token, user } = await authService.login(email, password);
+      const { token, user } = await userService.login(email, password);
 
       expect(token).toBeTruthy();
       expect(user.email).toBe(email);
@@ -102,7 +102,7 @@ describe("authService", () => {
         });
       });
 
-      await expect(authService.login(email, wrongPassword)).rejects.toThrow(
+      await expect(userService.login(email, wrongPassword)).rejects.toThrow(
         "Invalid password"
       );
     });

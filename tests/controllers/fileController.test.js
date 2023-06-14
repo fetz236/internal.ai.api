@@ -4,7 +4,7 @@ const express = require("express");
 const fileController = require("../../src/controllers/fileController");
 const chatbotService = require("../../src/services/chatbotService");
 const authMiddleware = require("../../src/middleware/authMiddleware");
-const authService = require("../../src/services/authService");
+const userService = require("../../src/services/userService");
 const fs = require("fs");
 const path = require("path");
 
@@ -27,7 +27,7 @@ describe("POST /api/file/upload", () => {
   });
   beforeAll(async () => {
     // add login process before all tests
-    const authResponse = await authService.login(
+    const authResponse = await userService.login(
       "debug@example.com",
       "testpassword"
     );
@@ -117,7 +117,7 @@ describe("POST /api/file/uploadDocx", () => {
   });
   beforeAll(async () => {
     // add login process before all tests
-    const authResponse = await authService.login(
+    const authResponse = await userService.login(
       "debug@example.com",
       "testpassword"
     );
