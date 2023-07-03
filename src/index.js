@@ -25,7 +25,8 @@ app.post("/register", userRouter.register);
 app.post("/login", userRouter.login);
 app.use("/api/file", authMiddleware, fileRouter);
 app.use("/api/chatbot", authMiddleware, chatbotRouter);
-app.use("/api/company", authMiddleware, companyRouter);
+app.use("/api/company/register", authMiddleware, companyRouter.register);
+app.use("/api/company/login", authMiddleware, companyRouter.getCompanyDetails);
 
 // app.use('/api/users', userRouter);
 
