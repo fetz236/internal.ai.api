@@ -56,7 +56,6 @@ describe("generateResponse", () => {
       message: "Network Error",
     });
   });
-
   test("should maintain conversation history for user and company", async () => {
     const companyId = "15251";
     const userEmail = "bugde@example.com";
